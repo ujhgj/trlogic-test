@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  wordpress:
+#    image: ujhgj/wordpress
+    build: ./wordpress # contents of this folder is a copy of official docker build sources of Wordpress applicaiton
+    ports:
+      - 80:80
+    volumes:
+      - ./config/php.conf.uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: password
+    depends_on:
+      - db
+    networks:
+      - wordpress-network
+
+  db:
+    image: mysql:latest
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: password
+    networks:
+      - wordpress-network
+
+networks:
+  wordpress-network:
+      driver: bridge
